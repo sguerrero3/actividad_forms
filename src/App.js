@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -16,7 +15,7 @@ function App() {
 
   const validateEmail = (em) => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return emailRegex.test(em)
+    return emailRegex.test(String(em).toLowerCase())
   }
 
   const [validationStates, setValidationStates] = useState({ emailState: false, passwordState: false });
@@ -28,7 +27,8 @@ function App() {
   });
  
   const handlePasswordChange = ((e) => {
-    setFormValues({...formValues, password: e.target.value})
+    setFormValues({...formValues, password: e.target.value});
+
     const isValidPassword = validatePassword(e.target.value);
 
     setValidationStates({...validationStates, passwordState: isValidPassword});
@@ -42,13 +42,13 @@ function App() {
     //Call fetch
     const isValidEmail = validateEmail(formValues.email)
 
-    setValidationStates({...validationStates, emailState: isValidEmail})
+    setValidationStates({emailState: isValidEmail, passwordState: validationStates.passwordState})
 
-    if(validationStates.emailState && validationStates.passwordState){
-      alert(JSON.stringify(formValues))
+    if(isValidEmail && validationStates.passwordState){
+      alert('Formulario valido')
     }
     else{
-      alert(JSON.stringify(validationStates))
+      alert('Formulario Invalido')
     }
     
   })
@@ -62,14 +62,14 @@ function App() {
       <Form>
       <Form.Group className="mb-6" controlId="formBasicEmail">
         <Form.Label>Email address</Form.Label>
-        <Form.Control type="email" placeholder="Enter email" onChange={handleEmailChange} value={formValues.email} />
+        <Form.Control type="email" placeholder="Enter email" onChange={handleEmailChange} value={formValues.email} className={validationStates.emailState ? '' : 'is-invalid'}/>
         { !validationStates.emailState && <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text>}
       </Form.Group>
  
       <Form.Group className="mb-3" controlId="formBasicPassword">
         <Form.Label>Password</Form.Label>
         <Form.Control type="password" placeholder="Password" onChange={handlePasswordChange} value={formValues.password} className={validationStates.passwordState ? '' : 'is-invalid'}/>
-        { !validationStates.passwordState && <Form.Text className="text-muted">Your password should be have numbers and letters and should be at least 9 char long</Form.Text>}
+        { !validationStates.passwordState && <Form.Text className="text-muted">Your password should be have numbers and letters and should be at least 8 char long with special characters, lower and upper case letters</Form.Text>}
       </Form.Group>
       <Form.Group className="mb-3" controlId="formBasicCheckbox">
         <Form.Label>Favorite Class</Form.Label>
